@@ -1,7 +1,13 @@
 # first of all import the socket library 
-import socket                
+import socket      
+
+private_key_KDA = 283749
+public_key_A = 943509
+public_key_B = 94350
+n = 205193
+
+
   
-# next create a socket object 
 s = socket.socket()          
 print ("Socket successfully created")
   

@@ -1,4 +1,9 @@
-import socket         
+import socket
+
+public_key_KDA = 82438
+private_key_A = 23468
+n = 205193
+
 
 '''
 Sending request to KDA asking for public key of B
