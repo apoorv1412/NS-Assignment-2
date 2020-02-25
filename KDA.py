@@ -7,7 +7,8 @@ print ("Socket successfully created")
   
 # reserve a port on your computer in our 
 # case it is 12345 but it can be anything 
-port = 12345                
+port = 12345 
+               
   
 # Next bind to the port 
 # we have not typed any ip in the ip field 
@@ -29,4 +30,17 @@ message = str(c.recv(1024))
 print (message)
 c.send(b'Sending public key of B')
 # Close the connection with the client 
-c.close() 
+ 
+c.close()
+
+c, addr = s.accept()      
+print ('Connected to B')  	
+
+message = str(c.recv(1024))
+print (message)
+c.send(b'Sending public key of A')
+
+c.close()
+
+
+

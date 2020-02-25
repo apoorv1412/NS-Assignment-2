@@ -6,7 +6,7 @@ s = socket.socket()
   
 # reserve a port on your computer in our 
 # case it is 12345 but it can be anything 
-port = 12345                
+port = 12346              
   
 # Next bind to the port 
 # we have not typed any ip in the ip field 
@@ -25,8 +25,29 @@ print ('Connected to A')
 
 message = str(c.recv(1024))
 print (message)
-c.send(b'Sending public key of B')
+c.send(b'Received request from A')
 # Close the connection with the client 
 c.close() 
 
+port = 12345
+s.connect(('127.0.0.1', port))
+
+s.send(b'Asking public key of A')
+
+s.close()
+
+port = 12345
+
+s.connect(('127.0.0.1', port))
+print ('Sending confirmation to A')
+s.send(b'Asking for confirmation')
+
+message = str(s.recv(1024))
+print (message)
+
+print ('Received confirmation of A')
+
+s.send(b'Message 1 from B')
+
+s.close()
 
