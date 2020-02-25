@@ -21,17 +21,12 @@ print ("socket binded to %s" %(port))
 s.listen()      
 print ("socket is listening")            
   
-# a forever loop until we interrupt it or  
-# an error occurs 
-while True: 
-  
-   # Establish connection with client. 
-   c, addr = s.accept()      
-   print ('Got connection from', addr) 
-  
-   # send a thank you message to the client.  
-   c.send(b'Thank you for connecting') 
-  
-   # Close the connection with the client 
-   c.close() 
-   break
+# Establish connection with client. 
+c, addr = s.accept()      
+print ('Connected to A')  	
+
+message = str(c.recv(1024))
+print (message)
+c.send(b'Sending public key of B')
+# Close the connection with the client 
+c.close() 
