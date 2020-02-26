@@ -1,9 +1,9 @@
 # first of all import the socket library 
 import socket           
 
-public_key_KDA = 82438
-private_key_B = 23468   
-n = 205193
+public_key_B = 1841622505
+private_key_A = 100093193
+n = 2055803977
 
 s = socket.socket()          
 port = 2001       
