@@ -1,9 +1,9 @@
 # first of all import the socket library 
-import socket           
+import socket, RSA
 
-public_key_B = 1841622505
-private_key_A = 100093193
-n = 2055803977
+private_key_B = 100093193
+public_key_KDA = 199570405
+
 
 s = socket.socket()          
 port = 2001       
