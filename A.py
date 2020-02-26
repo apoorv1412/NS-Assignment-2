@@ -2,32 +2,41 @@ import socket, RSA
 
 private_key_A = 100015691
 public_key_KDA = 199570405
+public_key_B = -1
+ID_A = 10
 
+
+def format(msg):
+	return msg.split('||')
 
 
 '''
 Sending request to KDA asking for public key of B
 '''       
 s = socket.socket()            
-port = 1001             
-s.connect(('192.168.59.49', port))
-message = 'Connection request of B'
+port = 10002           
+s.connect(('192.168.32.218', port))
+message = 'Connection request of B' + '||' + '.'
 # message = RSA.encrypt(message, RSA.n, )
 s.send(str.encode(message))
 reply = s.recv(1024)
-reply = str.decode(reply)
-print (reply)
-print ('Got public key of B') 
+reply = reply.decode()
+decrypted_reply = RSA.decrypt(reply, RSA.n, public_key_KDA)
+public_key_B = int(format(decrypted_reply)[0])
+print ('Got public key of B', public_key_B) 
 s.close()
 
 '''
 Sending message to B, asking for confirmation
 '''
-# port = 2001
-# s = socket.socket()
-# s.connect(('192.168.32.232', port))
-# s.send(b'Sending message to B')
-# s.close()
+port = 2002
+s = socket.socket()
+s.connect(('192.168.59.49', port))
+print('Sending message to B')
+request_to_B = str(ID_A) + '||' + '.'
+encrypted_request_to_B = RSA.encrypt(request_to_B, RSA.n, public_key_B)
+s.send(str.encode(encrypted_request_to_B))
+s.close()
 
 # '''
 # Listening to B's response
