@@ -1,8 +1,8 @@
 import socket
 
-public_key_KDA = 82438
-private_key_A = 23468
-n = 205193
+public_key_A = 1893307107
+private_key_A = 100015691
+n = 2055803977
 
 
 '''
