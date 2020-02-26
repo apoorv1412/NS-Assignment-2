@@ -1,4 +1,9 @@
+
 block_size = 30
+p = 45293
+q = 45389
+phi = (p-1)*(q-1)
+n = 2055803977
 
 def encrypt(message, n, e):
 	binary_string = ''
@@ -49,15 +54,5 @@ def decrypt(message, n, d):
 
 
 
-p = 45293
-q = 45389
-phi = (p-1)*(q-1)
-n = p*q
-e = 1001629
-d = 199570405
 
-message = "?!Fwkn!!!ldmsLMKLckndskjvDSq///....,,,>>>,<<"
-encrypted_string = encrypt(message, n, e)
-decrypted_string = decrypt(encrypted_string, n, d)
-print (message)
-print (decrypted_string)
+
