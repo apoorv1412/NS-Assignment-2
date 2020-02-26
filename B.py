@@ -51,17 +51,20 @@ s.close()
 
 
 
-# # Connecting with A again
-# s = socket.socket()          
-# port = 12345
-# s.connect(('192.168.32.233', port))
-# # Talking to A
-# print ('Sending confirmation to A')
-# s.send(b'Asking for confirmation')
-# message = str(s.recv(1024))
-# print (message)
-# print ('Received confirmation of A')
+# Connecting with A again
+s = socket.socket()          
+port = 2002
+s.connect(('192.168.32.217', port))
+# Talking to A
+print('Sending confirmation to A')
+confirmation_to_A = 'N1' + '||' + 'N2'
+encrypted_confirmation_to_A = RSA.encrypt(confirmation_to_A, RSA.n, public_key_A)
+s.send(encrypted_confirmation_to_A.encode())
+
+encrypted_confirmation_from_A = s.recv(1024).decode()
+decrypted_confirmation_from_A = RSA.decrypt(encrypted_confirmation_from_A, RSA.n, private_key_B)
+print ('Received confirmation of A', decrypted_confirmation_from_A)
 # s.send(b'Message 1 from B')
-# # Closing Connection with A
-# s.close()
+# Closing Connection with A
+s.close()
 
