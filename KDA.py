@@ -11,7 +11,7 @@ public_key_B = 1841622505
 s = socket.socket()          
 print ("Socket successfully created")
   
-port = 10002
+port = 10003
 s.bind(('', port))         
 print ("socket binded to %s" %(port)) 
   
