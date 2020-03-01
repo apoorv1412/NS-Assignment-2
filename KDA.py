@@ -2,6 +2,9 @@
 import socket, RSA
 import datetime
 
+port_1 = 10007
+port_2 = 2007
+
 def format(msg):
 	return msg.split('||')
 
@@ -12,7 +15,7 @@ public_key_B = 1841622505
 s = socket.socket()          
 print ("Socket successfully created")
   
-port = 10003
+port = port_1
 s.bind(('', port))         
 print ("socket binded to %s" %(port)) 
   
@@ -28,7 +31,7 @@ formatted_request = request[0]
 print (formatted_request)
 time_in_request = date_time_obj = datetime.datetime.strptime(request[1], '%Y-%m-%d %H:%M:%S.%f')
 
-if((time_in_request - datetime.datetime.now()).total_seconds() > 1):
+if(abs((time_in_request - datetime.datetime.now()).total_seconds()) > 1):
 	print("INVALID MESSAGE")
 else:
 	print("MESSAGE RECEIVED WITHIN TIME")
@@ -40,6 +43,9 @@ encrypted_message = RSA.encrypt(message, RSA.n, private_key_KDA)
 c.send(str.encode(encrypted_message))
 # Close the connection with the A
 c.close()
+
+
+
 
 # Establish connection with B. 
 c, addr = s.accept()      
