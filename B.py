@@ -1,6 +1,9 @@
 # first of all import the socket library 
-import socket, RSA
+import socket, RSA, datetime
 from random import randint as rint
+
+port_1 = 10007
+port_2 = 2007
 
 private_key_B = 100093193
 public_key_KDA = 199570405
@@ -14,7 +17,7 @@ def format(msg):
 
 
 s = socket.socket()          
-port = 2004
+port = port_2
 s.bind(('', port))         
   
 # put the socket into listening mode 
@@ -39,26 +42,42 @@ s.close()
 
 
 # Connecting with KDA
-port = 10003
+port = port_1
 s = socket.socket()          
-s.connect(('192.168.32.219', port))
-# Asking for public key of A 
-print('Asking public key of A')
-request_to_KDA = 'Connection request to A' + '||' + '.'
-s.send(request_to_KDA.encode())
-reply = s.recv(1024).decode()
+s.connect(('127.0.0.1', port))
+time_now = datetime.datetime.now()
+message = 'Connection request of A' + '||' + str(time_now)
+# Connection request of A
+s.send(str.encode(message))
+
+reply = s.recv(1024)
+reply = reply.decode()
 decrypted_reply = RSA.decrypt(reply, RSA.n, public_key_KDA)
-public_key_A = int(format(decrypted_reply)[0])
-print('Got public key of A', public_key_A)
-# Closing connection with KDA
+decrypted_reply = format(decrypted_reply)
+print(decrypted_reply)
+public_key_A = int(decrypted_reply[0])
+time_from_reply = datetime.datetime.strptime(decrypted_reply[2], '%Y-%m-%d %H:%M:%S.%f')
+
+if(abs((time_now - time_from_reply).total_seconds()) > 1):
+	print("message time out")
+else:
+	print("message is received within time")
+	# print(time_now)
+	# print(time_from_reply)
+if(decrypted_reply[1] != format(message)[0]):
+	print("Message Corrupt")
+else:
+	print("Message OK")
+
+print ('Got public key of A', public_key_A)
 s.close()
 
 
 
 # Connecting with A again
 s = socket.socket()          
-port = 2004
-s.connect(('192.168.32.227', port))
+port = port_2
+s.connect(('127.0.0.1', port))
 # Talking to A
 print('Sending confirmation to A')
 
@@ -76,7 +95,21 @@ if(int(format(decrypted_confirmation_from_A)[0]) != nonce_B):
 	print("Nonce sent is not equal to nonce_B")
 else:
 	print("Nonce sent is equal to nonce_B")
-# s.send(b'Message 1 from B')
-# Closing Connection with A
+
+############### VERIFIED CONNECTION ESTABLISHED WITH A ##################
+
+raw_message = 'Got-it '
+
+for _ in range(3):
+	message_from_A = RSA.decrypt(s.recv(1024).decode(), RSA.n, private_key_B)
+	desired_message = "Hi " + str(_ + 1)
+
+	if(message_from_A != desired_message):
+		print(message_from_A, 'not equal to', desired_message)
+	else:
+		print('OK', message_from_A)
+		message = raw_message + str(_ + 1)
+		s.send(RSA.encrypt(message, RSA.n, public_key_A).encode())
+
 s.close()
 
