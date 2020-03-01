@@ -2,6 +2,9 @@ import socket, RSA
 import datetime
 from random import randint as rint
 
+port_1 = 10007
+port_2 = 2007
+
 private_key_A = 100015691
 public_key_KDA = 199570405
 public_key_B = -1
@@ -17,8 +20,8 @@ def format(msg):
 Sending request to KDA asking for public key of B
 '''       
 s = socket.socket()
-port = 10003  
-s.connect(('192.168.32.219', port))
+port = port_1  
+s.connect(('127.0.0.1', port))
 time_now = datetime.datetime.now()
 message = 'Connection request of B' + '||' + str(time_now)
 print(message)
@@ -32,21 +35,26 @@ print(decrypted_reply)
 public_key_B = int(decrypted_reply[0])
 time_from_reply = datetime.datetime.strptime(decrypted_reply[2], '%Y-%m-%d %H:%M:%S.%f')
 
-if((time_now - time_from_reply).total_seconds() > 1):
+if(abs((time_now - time_from_reply).total_seconds()) > 1):
 	print("message time out")
 else:
 	print("message is received within time")
 	# print(time_now)
 	# print(time_from_reply)
+if(decrypted_reply[1] != format(message)[0]):
+	print("Message Corrupt")
+else:
+	print("Message OK")
+
 print ('Got public key of B', public_key_B) 
 s.close()
 
 '''
 Sending message to B, asking for confirmation
 '''
-port = 2004
+port = port_2
 s = socket.socket()
-s.connect(('192.168.32.226', port))
+s.connect(('127.0.0.1', port))
 print('Sending message to B')
 
 nonce = rint(10**12, 10**18)
@@ -59,7 +67,7 @@ s.close()
 '''
 Listening to B's response
 '''
-port = 2004
+port = port_2
 s = socket.socket()
 s.bind(('', port))         
 print ("socket binded to %s" %(port)) 
@@ -83,5 +91,26 @@ print ('nonce_2', nonce_2)
 
 encrypted_confirmation_to_B = RSA.encrypt(nonce_2, RSA.n, public_key_B)
 c.send(str.encode(encrypted_confirmation_to_B))
+
+############### VERIFIED CONNECTION ESTABLISHED WITH B ##################
+
+raw_message = 'Hi '
+
+for _ in range(3):
+	message = raw_message + str(_ + 1)
+	encrypted_message = RSA.encrypt(message, RSA.n, public_key_B)
+	c.send(str.encode(encrypted_message))
+
+	confirmation_from_B = c.recv(1024).decode()
+	decrypted_confirmation_from_B = RSA.decrypt(confirmation_from_B, RSA.n, private_key_A)
+
+	desired_confirmation = "Got-it " + str(_ + 1)
+
+	if(desired_confirmation == decrypted_confirmation_from_B):
+		print("OK",message,desired_confirmation)
+	else:
+		print(desired_confirmation, 'not equal to', decrypted_confirmation_from_B)
+
+
 c.close()
 s.close()
